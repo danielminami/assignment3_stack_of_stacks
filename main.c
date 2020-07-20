@@ -31,17 +31,34 @@ void createSet(stack_t **set) {
     }
 }
 
-bool isEmpty(stack_t* stack) {
+bool isStackEmpty(stack_t* stack) {
     return stack->top == -1;
 }
 
-bool isFull(stack_t* stack) {
+bool isStackFull(stack_t* stack) {
     return stack->top == stack->size -1;
 }
 
+bool isEmpty(stack_t** set) {
+    return set[0]->top == -1;
+}
+
+int numberOfUsedStacks(stack_t **set) {
+    int counter = 0;
+    for (int i=0; i<SETOFSTACKS_SIZE ;i++) {
+        if (isStackFull(set[i])) counter ++;
+    }
+    return counter;
+}
+
+bool isFull(stack_t** set) {
+    return (numberOfUsedStacks(set) > SETOFSTACKS_SIZE-1);
+}
+
 void push(stack_t **set, int value) {
-    for (int i=0; i<SETOFSTACKS_SIZE; i++) {
-        if (!isFull(set[i])) {
+    if (!isFull(set)) {
+        int i = numberOfUsedStacks(set);
+        if (!isStackFull(set[i])) {
             set[i]->data[++set[i]->top] = value;
             return;
         }
@@ -50,21 +67,23 @@ void push(stack_t **set, int value) {
 }
 
 int pop(stack_t **set) {
-    for (int i=SETOFSTACKS_SIZE-1; i>=0; i--) {
-         if (!isEmpty(set[i])) {
-            int temp = set[i]->data[set[i]->top];
-            set[i]->data[set[i]->top--] = 0;
-            return temp;
-        }
+    if (!isEmpty(set)) {
+        int index = numberOfUsedStacks(set);
+        if (isFull(set)) index--;
+        if (isStackEmpty(set[index])) --index; 
+        int temp = set[index]->data[set[index]->top];
+        set[index]->data[set[index]->top--] = 0;
+        return temp; 
+    } else {
+        printf("\nSorry SetOfStacks is EMPTY\n");
+        return 0;
     }
-    printf("\nSorry SetOfStacks is EMPTY\n");
 }
 
 void printSet(stack_t **set) {
-    printf("Printing set:\n");
     for (int i=0; i<SETOFSTACKS_SIZE; i++) {
         printf("Stack:");
-        if (isEmpty(set[i])) {
+        if (isStackEmpty(set[i])) {
             printf(" empty");
         } else {
             for (int j=0; j<MAX_STACK_SIZE ; j ++) {
@@ -79,10 +98,30 @@ void printSet(stack_t **set) {
     printf("\n");
 }
 
+void testCase1(stack_t** set);
+void testCase2(stack_t** set);
+
 int main() {
     
     stack_t* set[SETOFSTACKS_SIZE] = {NULL};
     createSet(set);
+    testCase1(set);
+   
+    exit(0);
+}
+
+void testCase2(stack_t** set) {
+    push(set, 1);
+    push(set, 2);
+    push(set, 3);
+    push(set, 4);
+    push(set, 5);
+    push(set, 6);
+    push(set, 7);
+    printSet(set);
+}
+
+void testCase1(stack_t** set) {
 
     pop(set);
     printSet(set);
@@ -93,6 +132,7 @@ int main() {
     push(set, 5);
     push(set, 6);
     push(set, 7);
+    printSet(set);
     push(set, 8);
     push(set, 9);
     push(set, 10);
@@ -101,6 +141,7 @@ int main() {
     push(set, 13);
     push(set, 14);
     push(set, 15);
+    printSet(set);
     push(set, 16);
     push(set, 17);
     printSet(set);
@@ -112,7 +153,8 @@ int main() {
     pop(set);
     pop(set);
     pop(set);
+    
+    printf("\n\n **** FINAL RESULT TEST CASE 1 **** \n\n");
     printSet(set);
-    exit(0);
+    printf("\n **** ------------------------ **** \n\n");
 }
-
