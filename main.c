@@ -63,16 +63,14 @@ int pop(stack_t **set) {
 void printSet(stack_t **set) {
     printf("Printing set:\n");
     for (int i=0; i<SETOFSTACKS_SIZE; i++) {
-        printf("Stack: ");
+        printf("Stack:");
         if (isEmpty(set[i])) {
-            printf("empty");
+            printf(" empty");
         } else {
             for (int j=0; j<MAX_STACK_SIZE ; j ++) {
                 if (set[i]->data[j] != 0) {
-                    if (j == 0)
-                        printf("%d", set[i]->data[j]);
-                    else
-                        printf(",%d", set[i]->data[j]);
+                    char comma = j == 0 ? ' ' : ',';
+                    printf("%c%d", comma, set[i]->data[j]);       
                 }
             }
         }
